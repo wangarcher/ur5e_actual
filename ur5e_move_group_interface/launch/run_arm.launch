@@ -3,7 +3,6 @@
 	<!-- <include file="$(find moveit_servo)/launch/servo_test.launch" />
 	<include file="$(find ur5e_teleop)/launch/uart_only.launch" /> -->
 	<include file="$(find ur5e_move_group_interface)/launch/ur5e_interface.launch" />
-	<include file="$(find dh_gripper_driver)/launch/dh_gripper.launch" />
 	<!-- <include file="$(find ur5e_admittance_control)/launch/admittance_controller.launch" /> -->
 	<!-- <include file="$(find ur5e_pid_control)/launch/pid_controller.launch" /> -->
 	<!-- <include file="$(find ur5e_relay_control)/launch/relay_controller.launch" /> -->

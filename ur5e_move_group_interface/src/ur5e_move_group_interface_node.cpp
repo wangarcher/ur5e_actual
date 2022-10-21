@@ -76,248 +76,38 @@ int main(int argc, char** argv)
     ros::Rate r(100);
     while(ros::ok())
     {
-
-      if(flag_mode == 0)
+      // std::cout << flag_mode << std::endl;
+      if(flag_mode == 1)
       {
-          excuting = true;
-          std::cout << "Manipulator go back "  << std::endl;
-          pause_program.call(ur5e_trigger);
-          operating_change = false;
-          ur_dashboard_msgs::Load goback_load;
-          goback_load.request.filename = "go_back.urp";
-          load_program.call(goback_load);
-          sleep(1);
-          start_program.call(ur5e_trigger);
-          sleep(3);
-          // power_off.call(ur5e_trigger);
-            flag_mode = -1;
-          excuting = false;
-      }
-      else if(flag_mode == 1)
-      {
-          excuting = true;
-          // package_state = 0;
-          // radio_state = 0;
-          std::cout << "Manipulator Preparing ... "  << std::endl;
-          operating_change = false;
-          ur_dashboard_msgs::Load init_load;
-          init_load.request.filename = "init.urp";
-          default_start(&power_on,&break_release);
-          sleep(1);
-          load_program.call(init_load);
-          sleep(1);
-          start_program.call(ur5e_trigger);
-          sleep(3);
-          default_program_load(&load_program,&start_program);
-          sleep(1);
-          // servo_mode(controller_switch);
-          flag_mode = -1;
-          excuting = false;
-      }
-      else if(flag_mode == 2)
-      {
-        servo_mode(controller_switch);
+        default_program_load(&load_program,&start_program);
+        sleep(2);
         flag_mode = -1;
-        excuting = false;
       }
-
-      // if(operating_mode == true)
-      // {
-      //     flag_mode = 0;
-      //     continue;
-      // }
-
-      ur_dashboard_msgs::GetSafetyMode mode_get_tool;
-      ur_dashboard_msgs::Load pose_reset;
-
-      // std::cout << "Current flag mode :" << flag_mode << std::endl;
-      
-      switch(flag_mode)
+      if(flag_mode == 7)
       {
-//         case 0:
-//           servo_info_pub.publish(servo_info_ptr);
-//           break;
-//         case 1:
-//           if(controller_switch_flag)
-//           {
-//             std::cout << "admittance control start ..." << std::endl;
-//             servo_to_admittance(controller_switch);
-//             zero_ftsensor_client.call(ur5e_trigger);    
-//             controller_switch_flag = false;        
-//           }
-//           admittance_info_pub.publish(servo_info_ptr);
-//           break;
-//         case 2:  // force the arm go back to initial position
-//           pose_reset.request.filename = "pose_reset.urp";  // name should be changed !!!
-//           load_program.call(pose_reset);
-//           start_program.call(ur5e_trigger);
-//           sleep(3);
-//           default_program_load(&load_program,&start_program);
-//           radio_state = 0;
-//           package_state = 0; 
-//           flag_mode = 0;
-//           break;
-//         case 3:  // load PACKAGE_SEQ_0
-// #ifdef PACKAGE_SEQ_0
-//           if(package_state == 0)
-//           {
-//             package_state = 1;
-//             excuting = true;
-//             pause_program.call(ur5e_trigger);
-//             action_m.request.filename = "package_action_0.urp";
-//             load_program.call(action_m);
-//             sleep(1);
-//             start_program.call(ur5e_trigger);
-//             sleep(16);
-//             default_program_load(&load_program,&start_program);
-//             sleep(1);
-//             std::cout << "please relase the gripper " << std::endl;
-//             excuting = false;
-//           }
-//           else
-//           {
-//             std::cout << "action denied,please reset to initial pose or continue the following sequence" << std::endl;
-//             std::cout << "Be careful, operator" << std::endl;
-//           }
-// #endif
-//           flag_mode = 0;
-//           break;
-//         case 4: // load PACKAGE_SEQ_1
-// #ifdef PACKAGE_SEQ_1
-//           if(package_state == 1)
-//           {
-//             package_state = 0;
-//             excuting = true;
-//             pause_program.call(ur5e_trigger);
-//             action_m.request.filename = "package_action_1.urp";
-//             load_program.call(action_m);
-//             sleep(1);
-//             start_program.call(ur5e_trigger);
-//             sleep(9);
-//             default_program_load(&load_program,&start_program);
-//             sleep(1);
-//             std::cout << "Package sequence done!" << std::endl;
-//             excuting = false;
-//           }
-//           else
-//           {
-//             std::cout << "action denied,please reset to initial pose or continue the following sequence" << std::endl;
-//             std::cout << "Be careful, operator" << std::endl;
-//           }
-// #endif
-//           flag_mode = 0;
-//           break;
-        case 5: // recovery mode 
-          get_safety_mode.call(mode_get_tool);
-          if(mode_get_tool.response.success == false)
-          {
-            std::cout << "unable to get safety mode !" << std::endl;
-            break;
-          }
-          switch (mode_get_tool.response.safety_mode.mode)
-          {
-          case 1:  // NORMAL
-            default_start(&power_on,&break_release);
-            break;
-          case 2:  // REDUCED
-            break;
-          case 3:  // PROTECTIVE_STOP
-            unlock_protective_stop.call(ur5e_trigger);
-            default_program_load(&load_program,&start_program);
-            break;           
-          default:
-            solve_safety_problem.call(ur5e_trigger);
-            while(ur5e_mode!=W_POWER_OFF);
-            default_start(&power_on,&break_release);
-            default_program_load(&load_program,&start_program);
-            break;
-          }
-          flag_mode = 0;
-          break;
-//         case ADMITTANCE_DIS:
-//           admittance_to_servo(controller_switch);
-//           flag_mode = 0;
-//           break;
-//         case 8:  // load RADIO_SEQ_0
-// #ifdef RADIO_SEQ_0
-//           if(radio_state == 0)
-//           {
-//             radio_state = 1;
-//             excuting = true;
-//             pause_program.call(ur5e_trigger);
-//             action_m.request.filename = "radio_action_0.urp";
-//             load_program.call(action_m);
-//             sleep(1);
-//             start_program.call(ur5e_trigger);
-//             sleep(9);
-//             default_program_load(&load_program,&start_program);
-//             sleep(1);
-//             std::cout << "please grasp and hold tight " << std::endl;
-//             excuting = false;
-//           }
-//           else
-//           {
-//             std::cout << "action denied,please reset to initial pose or continue the following sequence" << std::endl;
-//             std::cout << "Be careful, operator" << std::endl;
-//           }
-// #endif
-//           flag_mode = 0;
-//           break;
-//         case 9:  // load RADIO_SEQ_1
-// #ifdef RADIO_SEQ_1
-//           if(radio_state == 1)
-//           {
-//             radio_state = 2;
-//             excuting = true;
-//             pause_program.call(ur5e_trigger);
-//             action_m.request.filename = "radio_action_1.urp";
-//             load_program.call(action_m);
-//             sleep(1);
-//             start_program.call(ur5e_trigger);
-//             sleep(16);
-//             default_program_load(&load_program,&start_program);
-//             sleep(1);
-//             std::cout << "please relase the gripper " << std::endl;
-//             excuting = false;
-//           }
-//           else
-//           {
-//             std::cout << "action denied,please reset to initial pose or continue the following sequence" << std::endl;
-//             std::cout << "Be careful, operator" << std::endl;
-//           }
-// #endif
-//           flag_mode = 0;
-//           break;
-//         case 10: // load RADIO_SEQ_2
-// #ifdef RADIO_SEQ_2
-//           if(radio_state == 2)
-//           {
-//             radio_state = 0;
-//             excuting = true;
-//             pause_program.call(ur5e_trigger);
-//             action_m.request.filename = "radio_action_2.urp";
-//             load_program.call(action_m);
-//             sleep(1);
-//             start_program.call(ur5e_trigger);
-//             sleep(16);
-//             default_program_load(&load_program,&start_program);
-//             sleep(1);
-//             std::cout << " Radio sequence done! " << std::endl;
-//             excuting = false;
-//           }
-//           else
-//           {
-//             std::cout << "action denied,please reset to initial pose or continue the following sequence" << std::endl;
-//             std::cout << "Be careful, operator" << std::endl;
-//           }
-// #endif
-//           flag_mode = 0;
-//           break;
-//         default:
-//           flag_mode = 0;
-//           break;
+        ur_dashboard_msgs::Load gripper_open;
+        gripper_open.request.filename = "gripper_open.urp";
+        load_program.call(gripper_open);
+        sleep(1);
+        start_program.call(ur5e_trigger);
+        sleep(7);
+        default_program_load(&load_program,&start_program);
+        sleep(2);
+        flag_mode = -1;
       }
-       
+      if(flag_mode == 8)
+      {
+        ur_dashboard_msgs::Load gripper_close;
+        gripper_close.request.filename = "gripper_close.urp";
+        load_program.call(gripper_close);
+        sleep(1);
+        start_program.call(ur5e_trigger);
+        sleep(7);
+        default_program_load(&load_program,&start_program);
+        sleep(2);
+        flag_mode = -1;
+      }
+    
       ros::spinOnce();
       r.sleep();
     }
@@ -335,25 +125,6 @@ bool arm_mode_switch_handle(mission_mode::mode_switch::Request &req, mission_mod
   res.success = 1;
   flag_mode = flag_temp;
 
-  // if(flag_temp == OPREATING_SWITCH && excuting == false)
-  // {
-  //   // operating_mode = !operating_mode;
-  //   operating_change = true;
-  //   res.success = 1;
-  //   return true;
-  // }
-  //  // only in servo mode, we can interrupt and change ur5e to excute other mission 
-  //  // and only in admittance control mode, we need switch to servo manually
-  // if((flag_mode == 0 && flag_temp != ADMITTANCE_DIS) || (flag_mode == 1 && flag_temp == ADMITTANCE_DIS) )
-  // {
-  //   flag_mode = flag_temp;
-  //   res.success = 1;
-  //   if(flag_temp == 1)
-  //   {
-  //     controller_switch_flag = true;
-  //   }
-  // }
-  
   return true;
 }
 
@@ -384,13 +155,13 @@ bool default_program_load(ros::ServiceClient* load_program,ros::ServiceClient* s
 {
     std_srvs::Trigger ur5e_trigger;
     ur_dashboard_msgs::Load control_load;
-    control_load.request.filename = "ros0810.urp";
+    control_load.request.filename = "ur_robot_driver.urp";
     load_program->call(control_load);
     start_program->call(ur5e_trigger);
 
     if(control_load.response.success == false)
     {
-      std::cout << control_load.response.answer <<"failed to load ros0810.urp" << std::endl;
+      std::cout << control_load.response.answer <<"failed to load ur_robot_driver.urp" << std::endl;
       return 1;
     }
 

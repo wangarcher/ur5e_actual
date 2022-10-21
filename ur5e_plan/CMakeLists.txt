@@ -245,8 +245,8 @@ add_executable(project_plan src/project_plan.cpp)
 target_link_libraries(project_plan ${catkin_LIBRARIES})
 
 
-add_executable(project_plan_next src/project_plan_next.cpp)
-target_link_libraries(project_plan_next ${catkin_LIBRARIES})
+# add_executable(project_plan_next src/project_plan_next.cpp)
+# target_link_libraries(project_plan_next ${catkin_LIBRARIES})
 # add_executable(test_tf src/test_tf.cpp )
 # target_link_libraries(test_tf ${catkin_LIBRARIES})
 
