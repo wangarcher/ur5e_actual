@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="tf" type="static_transform_publisher" name="arm_slam_cali" args="0.425 0 -0.75 -1.57 0 0 /slam_base_link /world 2"/>
+
+</launch>

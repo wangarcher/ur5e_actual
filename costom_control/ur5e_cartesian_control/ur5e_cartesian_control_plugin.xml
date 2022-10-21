@@ -1,0 +1,44 @@
+<library path="lib/libur5e_cartesian_control">
+  <class name="cartesian_controller/CartesianVelocityControllerPID" type="controller_interface::CartesianVelocityControllerPID" base_class_type="controller_interface::ControllerBase">
+    <description>
+        Cartesian velocity control
+    </description>
+  </class>
+
+  <class name="cartesian_controller/CartesianVelocityControllerPIDSim" type="controller_interface::CartesianVelocityControllerPIDSim" base_class_type="controller_interface::ControllerBase">
+    <description>
+        Cartesian velocity control using a position interface. This is used in conjunction with Gazebo which, at the moment of writing this code, does not fully support a joint velocity interface.
+    </description>
+  </class>
+
+  <class name="cartesian_controller/CartesianVelocityControllerADM" type="controller_interface::CartesianVelocityControllerADM" base_class_type="controller_interface::ControllerBase">
+    <description>
+        Cartesian velocity control
+    </description>
+  </class>
+
+  <class name="cartesian_controller/CartesianVelocityControllerADMSim" type="controller_interface::CartesianVelocityControllerADMSim" base_class_type="controller_interface::ControllerBase">
+    <description>
+        Cartesian velocity control using a position interface. This is used in conjunction with Gazebo which, at the moment of writing this code, does not fully support a joint velocity interface.
+    </description>
+  </class>
+
+    <class name="cartesian_controller/CartesianPositionController" type="controller_interface::CartesianPositionController" base_class_type="controller_interface::ControllerBase">
+    <description>
+        Cartesian position control
+    </description>
+  </class>
+
+  <class name="cartesian_controller/CartesianPositionControllerSim" type="controller_interface::CartesianPositionControllerSim" base_class_type="controller_interface::ControllerBase">
+    <description>
+        Cartesian position control
+    </description>
+  </class>
+
+    <class name="cartesian_controller/CartesianStateController" type="controller_interface::CartesianStateController" base_class_type="controller_interface::ControllerBase">
+    <description>
+        Cartesian state observer
+    </description>
+  </class>
+
+</library>

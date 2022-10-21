@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="ur5e_plan" type="general_pp" name="general_plan_pipeline" />
+
+</launch>

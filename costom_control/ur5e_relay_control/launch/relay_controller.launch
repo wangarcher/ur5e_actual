@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 1  world base_link 2" />
+
+  <arg name="CMD_TOPIC_ARM" default="/ur5e_cartesian_position_controller/command_cart_pos"/>
+  <param name="topic_arm_command" value="$(arg CMD_TOPIC_ARM) "/>
+
+
+    <rosparam file="$(find ur5e_relay_control)/config/ur5e_cart_controller.yaml" command="load"/>
+    <node name="arm_controller_spawner_fox" pkg="controller_manager"
+        type="controller_manager" args="load ur5e_cartesian_position_controller"
+        respawn="false" output="screen"/>
+  <!-- Make sure to start this in the namespace of the hardware interface -->
+  <node pkg="ur5e_relay_control" name="ur5e_relay_controller" type="relay_controller_node" output="screen"/>
+
+
+</launch>
