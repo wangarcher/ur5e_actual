@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>speed_scaling_state_controller</name>
+  <version>0.1.1</version>
+  <description>ROS controller providing reading the state of speed scaling on the robot</description>
+
+  <maintainer email="exner@fzi.de">Felix Exner</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <url type="website">http://wiki.ros.org/speed_scaling_state_controller</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>controller_interface</depend>
+  <depend>pluginlib</depend>
+  <depend>realtime_tools</depend>
+  <depend>speed_scaling_interface</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <controller_interface plugin="${prefix}/controller_plugins.xml"/>
+  </export>
+</package>

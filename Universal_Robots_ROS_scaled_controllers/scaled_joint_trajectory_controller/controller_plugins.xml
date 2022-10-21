@@ -1,0 +1,12 @@
+<library path="lib/libscaled_joint_trajectory_controller">
+  <class name="position_controllers/ScaledJointTrajectoryController" type="position_controllers::ScaledJointTrajectoryController" base_class_type="controller_interface::ControllerBase">
+  <description>
+    Scaled velocity-based joint trajectory controller
+  </description>
+  </class>
+  <class name="velocity_controllers/ScaledJointTrajectoryController" type="velocity_controllers::ScaledJointTrajectoryController" base_class_type="controller_interface::ControllerBase">
+  <description>
+    Scaled velocity-based joint trajectory controller
+  </description>
+  </class>
+</library>
