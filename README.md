@@ -53,7 +53,7 @@ To run the project planning node
 roslaunch ur5e_plan ur5e_project_plan.launch
 ```
 
-##### 4. The flow chart
+### 4. The flow chart
 ```mermaid
     flowchart TD;
     INIT-->pre_pick;
@@ -74,12 +74,12 @@ get_place_pose: Get the target pose
 place:          Moving towards to that pose then place
 DONE:           Done
 ```
-__Be advised!__ The pipeline is logical unfriendly. Any modifications of this work flow might be devastated!
+__Be advised! The current pipeline is logical unfriendly. Any modifications of this work flow might be devastated!__
 
-##### 5. ROS topics
+### 5. ROS topics
 After moving to the pre pick pose, the robot would send a __std_msgs::Int8__ msg with data "__1__". And after moving to the pre place pose, the robot would send a __std_msgs::Int8__ msg with data "__2__". The reco module can then be enabled after such trigger is sent. The topic name of the trigger msg is "__/reco_trigger__"
 
-The reco module would feedback with a __geometry_msgs::PoseStamped__ msg, the name of the msg is "__/object_visual_odometry__".
+When the trigger is receive and the object is located, the reco module would feedback with a __geometry_msgs::PoseStamped__ msg. The name of the msg is "__/object_visual_odometry__".
 The msg would provide the target pose based on the camera reference frame.
 For the picking object, the "__frame_id__" of the msg shall be write as "__1st__".
 And the for the placing target, the "__frame_id__" of the msg shall be write as "__2nd__".
@@ -104,4 +104,4 @@ pose:
     z: -0.707
     w: 0.707"
 ```
-, to indicate that there is a pseudo object with such pose in the camera reference frame. 
+, to indicate that there is a pseudo picking object with such pose in the camera reference frame. 
