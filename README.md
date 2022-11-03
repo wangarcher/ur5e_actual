@@ -53,7 +53,7 @@ To run the project planning node
 roslaunch ur5e_plan ur5e_project_plan.launch
 ```
 
-##### 4. The working follow chart
+##### 4. The flow chart
 ```mermaid
     flowchart TD;
     INIT-->pre_pick;
@@ -65,20 +65,21 @@ roslaunch ur5e_plan ur5e_project_plan.launch
     place-->DONE;
 ```
 ```
-INIT:          Init
+INIT:           Init
 pre_pick:       Moving to 1st reco configuration
 get_pick_pose:  Get the object pose
 pick:           Moving towards to that pose then pick
 pre_place:      Moving to 2nd reco configuration
 get_place_pose: Get the target pose
 place:          Moving towards to that pose then place
-DONE:            Done
+DONE:           Done
 ```
-Be advised! The pipeline is logical unfriendly. Any modification of the working flow might be devastated!
+__Be advised!__ The pipeline is logical unfriendly. Any modifications of this work flow might be devastated!
 
-After moving to the pre pick pose, the robot would send a std_msgs::Int8 msg with data "1". And after moving to the pre place pose, the robot would send a std_msgs::Int8 msg with data "2". The reco module can then be enabled after such trigger is sent. The topic name of the trigger msg is "/reco_trigger"
+##### 5. ROS topics
+After moving to the pre pick pose, the robot would send a __std_msgs::Int8__ msg with data "__1__". And after moving to the pre place pose, the robot would send a __std_msgs::Int8__ msg with data "__2__". The reco module can then be enabled after such trigger is sent. The topic name of the trigger msg is "__/reco_trigger__"
 
-And the reco module would feedback with a geometry_msgs::PoseStamped msg.
+And the reco module would feedback with a __geometry_msgs::PoseStamped__ msg.
 The msg would provide the target pose according to the camera reference frame.
-For the picking object, the "frame_id" of the msg shall be write as "1st".
-And the for the placing target, the "frame_id" of the msg shall be write as "2nd".
+For the picking object, the "__frame_id__" of the msg shall be write as "__1st__".
+And the for the placing target, the "__frame_id__" of the msg shall be write as "__2nd__".
