@@ -23,8 +23,8 @@
 class GeneralPickPlace
 {
     public:
-        Eigen::Vector3d obj_cam_translation_;
-        Eigen::Quaterniond obj_cam_orientation_;
+        Eigen::Vector3d cam_obj_translation_;
+        Eigen::Quaterniond cam_obj_orientation_;
         bool first_reco_flag; // outwards flag, when the ee reached the desired pre-picking place
         bool second_reco_flag; // outwards flag, when the ee reached the desired pre-placeing place
         bool pick_flag = false; // inwards flag, when the flag set as true, the robot is ready for the pick motion sequence.
@@ -36,10 +36,10 @@ class GeneralPickPlace
 
 void GeneralPickPlace::obj_visual_callback(const geometry_msgs::PoseStamped & odom)
 {
-    obj_cam_translation_ << odom.pose.position.x,
+    cam_obj_translation_ << odom.pose.position.x,
                             odom.pose.position.y,
                             odom.pose.position.z;
-    obj_cam_orientation_.coeffs() <<  odom.pose.orientation.x,
+    cam_obj_orientation_.coeffs() <<  odom.pose.orientation.x,
                                       odom.pose.orientation.y,
                                       odom.pose.orientation.z,
                                       odom.pose.orientation.w;
@@ -59,7 +59,7 @@ void GeneralPickPlace::obj_visual_callback(const geometry_msgs::PoseStamped & od
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "project_plan");
+    ros::init(argc, argv, "project_plan_pipeline");
     ros::NodeHandle n;
     ros::AsyncSpinner spinner(7);
 	spinner.start();
@@ -80,6 +80,9 @@ int main(int argc, char **argv)
     arm.setMaxVelocityScalingFactor(0.2);
     
     std::string end_effector_link = arm.getEndEffectorLink(); //get the end_effector link
+    std::cout<<"end_effector_link: "<<end_effector_link<<std::endl;
+    std::string reference_frame = "base_link"; // set the reference frame
+    arm.setPoseReferenceFrame(reference_frame);
 
     GeneralPickPlace general_pick_place;
 
@@ -99,34 +102,38 @@ int main(int argc, char **argv)
     close_gripper_sig.request.mode_flag = 8;
 
     // geometry info
-    Eigen::Quaterniond tcp_obj_orientation(1, 0, 0, 0);
-    Eigen::Vector3d tcp_obj_translation(0, 0, -0.22);
-    Eigen::Quaterniond cam_tool_orientatoin(1, 0, 0, 0);
-    Eigen::Vector3d cam_tool_translation(-0.035, -0.09, 0.035);
+    Eigen::Quaterniond tool_tcp_orientation(1, 0, 0, 0);
+    Eigen::Vector3d tool_tcp_translation(0, 0, -0.20);
+    Eigen::Quaterniond tool_cam_orientatoin(0.707, 0, 0, 0.707);
+    Eigen::Vector3d tool_cam_translation(0.07, 0.05, -0.02);
 
-    Eigen::Quaterniond tool_base_orientation;
-    Eigen::Vector3d tool_base_translation;  
-    Eigen::Quaterniond cam_base_orientation;
-    Eigen::Vector3d cam_base_translation;
-    Eigen::Quaterniond obj_base_orientation;
-    Eigen::Vector3d obj_base_translation;
-    Eigen::Quaterniond tcp_base_orientation;
-    Eigen::Vector3d tcp_base_translation;
+    Eigen::Quaterniond base_tool_orientation;
+    Eigen::Vector3d base_tool_translation;  
+    Eigen::Quaterniond base_cam_orientation;
+    Eigen::Vector3d base_cam_translation;
+    Eigen::Quaterniond base_obj_orientation;
+    Eigen::Vector3d base_obj_translation;
+    Eigen::Quaterniond des_base_tool_orientation;
+    Eigen::Vector3d des_base_tool_translation;
 
     while(n.ok() && sequence_flag)
     {
         if(pre_pick_flag)
         {
+            std::cout<<"Caution: start the ur connect driver 1!"<<std::endl;
             ur_dashboard_client.call(arm_working_sig);
-            sleep(1);
+            sleep(3);
 
             std::cout<<"Caution: moving to the pre-pick pose!"<<std::endl;
             arm.setNamedTarget("1st_reco_start"); // first reco state, for the best top-looking view
             arm.move();
 
             ur_dashboard_client.call(open_gripper_sig);
-            sleep(1);
+            sleep(7);
 
+            std::cout<<"Caution: start the ur connect driver 2!"<<std::endl;
+            ur_dashboard_client.call(arm_working_sig);
+            sleep(3);
             reco_trigger_msg.data = 1;
             reco_trigger_pub.publish(reco_trigger_msg);
             sleep(1);
@@ -135,61 +142,74 @@ int main(int argc, char **argv)
         }
 
         if(pick_flag && general_pick_place.pick_flag)
-        {   
+        {
             std::cout<<"Caution: object pose received, now picking!"<<std::endl;
-            std::cout<<"end_effector_link: "<<end_effector_link<<std::endl;
-            std::string reference_frame = "base_link"; // set the reference frame
-            arm.setPoseReferenceFrame(reference_frame);
-
             geometry_msgs::Pose now_pose = arm.getCurrentPose(end_effector_link).pose;
-            std::cout<<"now Robot position: [x,y,z]: ["
-                    <<now_pose.position.x<<","<<now_pose.position.y<<","<<now_pose.position.z<<"]"
-                    <<std::endl;
-            std::cout<<"now Robot orientation: [x,y,z,w]: ["
-                    <<now_pose.orientation.x<<","<<now_pose.orientation.y<<","<<now_pose.orientation.z<<","<<now_pose.orientation.w<<"]"
-                    <<std::endl;
+            std::cout<<"now tool position: [x,y,z]: ["
+                     <<now_pose.position.x<<","<<now_pose.position.y<<","<<now_pose.position.z<<"]"
+                     <<std::endl;
+            std::cout<<"now tool orientation: [x,y,z,w]: ["
+                     <<now_pose.orientation.x<<","<<now_pose.orientation.y<<","<<now_pose.orientation.z<<","<<now_pose.orientation.w<<"]"
+                     <<std::endl;
 
-            tool_base_translation << now_pose.position.x, now_pose.position.y, now_pose.position.z;
-            tool_base_orientation.coeffs() << now_pose.orientation.x,
-                                            now_pose.orientation.y,
-                                            now_pose.orientation.z,
-                                            now_pose.orientation.w;
+            base_tool_translation << now_pose.position.x, now_pose.position.y, now_pose.position.z;
+            base_tool_orientation.coeffs() << now_pose.orientation.x,
+                                              now_pose.orientation.y,
+                                              now_pose.orientation.z,
+                                              now_pose.orientation.w;
 
-            cam_base_orientation = tool_base_orientation * cam_tool_orientatoin;
-            cam_base_translation = tool_base_orientation.toRotationMatrix() * cam_tool_translation + tool_base_translation;
+            base_cam_orientation = base_tool_orientation * tool_cam_orientatoin;
+            base_cam_translation = base_tool_orientation.toRotationMatrix() * tool_cam_translation + base_tool_translation;
 
-            obj_base_orientation = cam_base_orientation * general_pick_place.obj_cam_orientation_;
-            obj_base_translation = cam_base_orientation.toRotationMatrix() * general_pick_place.obj_cam_translation_ + cam_base_translation;
+            std::cout<<"now cam position: [x,y,z]: ["<< base_cam_translation.transpose() <<std::endl;
+            std::cout<<"now cam orientation: [x, y, z, w]: ["
+                     <<base_cam_orientation.x() <<", "
+                     <<base_cam_orientation.y() <<", "
+                     <<base_cam_orientation.z() <<", "
+                     <<base_cam_orientation.w() <<"]" <<std::endl;
 
-            tcp_base_orientation = obj_base_orientation * tcp_obj_orientation;
-            tcp_base_translation = obj_base_orientation.toRotationMatrix() * tcp_obj_translation + obj_base_translation; 
+            base_obj_orientation = base_cam_orientation * general_pick_place.cam_obj_orientation_;
+            base_obj_translation = base_cam_orientation.toRotationMatrix() * general_pick_place.cam_obj_translation_ + base_cam_translation;
 
-            std::cout<<"now obj position: "<< tcp_base_translation.transpose() <<std::endl;
-            std::cout<<"now obj orientation: [w, x, y, z]: ["
-                    << tcp_base_orientation.w() <<", "<< tcp_base_orientation.x() <<", "<<tcp_base_orientation.y()<<", "<<tcp_base_orientation.z() <<std::endl;
+            std::cout<<"now obj position: [x,y,z]: ["<< base_obj_translation.transpose() <<std::endl;
+            std::cout<<"now obj orientation: [x, y, z, w]: ["
+                     <<base_obj_orientation.x() <<", "
+                     <<base_obj_orientation.y() <<", "
+                     <<base_obj_orientation.z() <<", "
+                     <<base_obj_orientation.w() <<"]" <<std::endl;
+
+
+            des_base_tool_orientation = base_obj_orientation * tool_tcp_orientation;
+            des_base_tool_translation = base_obj_orientation.toRotationMatrix() * tool_tcp_translation + base_obj_translation; 
+
+            std::cout<<"des tool position: [x,y,z]: ["<< des_base_tool_translation.transpose() <<std::endl;
+            std::cout<<"des tool orientation: [x, y, z, w]: ["
+                     <<des_base_tool_orientation.x() <<", "
+                     <<des_base_tool_orientation.y() <<", "
+                     <<des_base_tool_orientation.z() <<", "
+                     <<des_base_tool_orientation.w() <<"]" <<std::endl;
 
             std::vector<geometry_msgs::Pose> waypoints;
             geometry_msgs::Pose pose1;
-            pose1.position.x = tcp_base_translation(0);
-            pose1.position.y = tcp_base_translation(1);	
-            pose1.position.z = tool_base_translation(2);	
-            pose1.orientation.x = obj_base_orientation.x();
-            pose1.orientation.y = obj_base_orientation.y();
-            pose1.orientation.z = obj_base_orientation.z();
-            pose1.orientation.w = obj_base_orientation.w();
+            pose1.position.x = des_base_tool_translation(0);
+            pose1.position.y = des_base_tool_translation(1);	
+            pose1.position.z = base_tool_translation(2);	
+            pose1.orientation.x = base_obj_orientation.x();
+            pose1.orientation.y = base_obj_orientation.y();
+            pose1.orientation.z = base_obj_orientation.z();
+            pose1.orientation.w = base_obj_orientation.w();
             waypoints.push_back(pose1);
 
             geometry_msgs::Pose pose2;
-            pose2.position.x = tcp_base_translation(0);
-            pose2.position.y = tcp_base_translation(1);	
-            pose2.position.z = tcp_base_translation(2);	
-            pose2.orientation.x = obj_base_orientation.x();
-            pose2.orientation.y = obj_base_orientation.y();
-            pose2.orientation.z = obj_base_orientation.z();
-            pose2.orientation.w = obj_base_orientation.w();
+            pose2.position.x = des_base_tool_translation(0);
+            pose2.position.y = des_base_tool_translation(1);	
+            pose2.position.z = des_base_tool_translation(2);	
+            pose2.orientation.x = base_obj_orientation.x();
+            pose2.orientation.y = base_obj_orientation.y();
+            pose2.orientation.z = base_obj_orientation.z();
+            pose2.orientation.w = base_obj_orientation.w();
             waypoints.push_back(pose2);
 
-            // planning
             moveit_msgs::RobotTrajectory trajectory;
             const double jump_threshold = 0.0;
             const double eef_step = 0.002;
@@ -220,8 +240,13 @@ int main(int argc, char **argv)
                 ROS_INFO("Path planning failed with only %0.6f success after %d attempts.", fraction, maxtries);
             }
 
+            std::cout<<"Caution: now picking!"<<std::endl;
             ur_dashboard_client.call(close_gripper_sig);
-            sleep(1); 
+            sleep(7); 
+
+            std::cout<<"Caution: start the ur connect driver 3!"<<std::endl;
+            ur_dashboard_client.call(arm_working_sig);
+            sleep(3);
             pick_flag = false;
             pre_place_flag = true;  
         }
@@ -243,53 +268,55 @@ int main(int argc, char **argv)
             std::cout<<"Caution: workspace pose received, now placing!"<<std::endl;
             geometry_msgs::Pose now_pose = arm.getCurrentPose(end_effector_link).pose;
             std::cout<<"now Robot position: [x,y,z]: ["
-                    <<now_pose.position.x<<","<<now_pose.position.y<<","<<now_pose.position.z<<"]"
-                    <<std::endl;
+                     <<now_pose.position.x<<","<<now_pose.position.y<<","<<now_pose.position.z<<"]"
+                     <<std::endl;
             std::cout<<"now Robot orientation: [x,y,z,w]: ["
-                    <<now_pose.orientation.x<<","<<now_pose.orientation.y<<","<<now_pose.orientation.z<<","<<now_pose.orientation.w<<"]"
-                    <<std::endl;
+                     <<now_pose.orientation.x<<","<<now_pose.orientation.y<<","<<now_pose.orientation.z<<","<<now_pose.orientation.w<<"]"
+                     <<std::endl;
 
-            tool_base_translation << now_pose.position.x, now_pose.position.y, now_pose.position.z;
-            tool_base_orientation.coeffs() << now_pose.orientation.x,
-                                            now_pose.orientation.y,
-                                            now_pose.orientation.z,
-                                            now_pose.orientation.w;
+            base_tool_translation << now_pose.position.x, now_pose.position.y, now_pose.position.z;
+            base_tool_orientation.coeffs() << now_pose.orientation.x,
+                                              now_pose.orientation.y,
+                                              now_pose.orientation.z,
+                                              now_pose.orientation.w;
 
-            cam_base_orientation = tool_base_orientation * cam_tool_orientatoin;
-            cam_base_translation = tool_base_orientation.toRotationMatrix() * cam_tool_translation + tool_base_translation;
+            base_cam_orientation = base_tool_orientation * tool_cam_orientatoin;
+            base_cam_translation = base_tool_orientation.toRotationMatrix() * tool_cam_translation + base_tool_translation;
 
-            obj_base_orientation = cam_base_orientation * general_pick_place.obj_cam_orientation_;
-            obj_base_translation = cam_base_orientation.toRotationMatrix() * general_pick_place.obj_cam_translation_ + cam_base_translation;
+            base_obj_orientation = base_cam_orientation * general_pick_place.cam_obj_orientation_;
+            base_obj_translation = base_cam_orientation.toRotationMatrix() * general_pick_place.cam_obj_translation_ + base_cam_translation;
 
-            tcp_base_orientation = obj_base_orientation * tcp_obj_orientation;
-            tcp_base_translation = obj_base_orientation.toRotationMatrix() * tcp_obj_translation + obj_base_translation; 
+            des_base_tool_orientation = base_obj_orientation * tool_tcp_orientation;
+            des_base_tool_translation = base_obj_orientation.toRotationMatrix() * tool_tcp_translation + base_obj_translation; 
 
-            std::cout<<"now obj position: "<< tcp_base_translation.transpose() <<std::endl;
-            std::cout<<"now obj orientation: [w, x, y, z]: ["
-                    << tcp_base_orientation.w() <<", "<< tcp_base_orientation.x() <<", "<<tcp_base_orientation.y()<<", "<<tcp_base_orientation.z() <<std::endl;
+            std::cout<<"now obj position: "<< des_base_tool_translation.transpose() <<std::endl;
+            std::cout<<"now obj orientation: [x, y, z, w]: ["
+                     <<des_base_tool_orientation.x() <<", "
+                     <<des_base_tool_orientation.y() <<", "
+                     <<des_base_tool_orientation.z() <<", "
+                     <<des_base_tool_orientation.w() <<"]" <<std::endl;
 
             std::vector<geometry_msgs::Pose> waypoints;
             geometry_msgs::Pose pose1;
-            pose1.position.x = tcp_base_translation(0);
-            pose1.position.y = tcp_base_translation(1);	
-            pose1.position.z = tool_base_translation(2);	
-            pose1.orientation.x = obj_base_orientation.x();
-            pose1.orientation.y = obj_base_orientation.y();
-            pose1.orientation.z = obj_base_orientation.z();
-            pose1.orientation.w = obj_base_orientation.w();
+            pose1.position.x = des_base_tool_translation(0);
+            pose1.position.y = des_base_tool_translation(1);	
+            pose1.position.z = base_tool_translation(2);	
+            pose1.orientation.x = base_obj_orientation.x();
+            pose1.orientation.y = base_obj_orientation.y();
+            pose1.orientation.z = base_obj_orientation.z();
+            pose1.orientation.w = base_obj_orientation.w();
             waypoints.push_back(pose1);
 
             geometry_msgs::Pose pose2;
-            pose2.position.x = tcp_base_translation(0);
-            pose2.position.y = tcp_base_translation(1);	
-            pose2.position.z = tcp_base_translation(2);	
-            pose2.orientation.x = obj_base_orientation.x();
-            pose2.orientation.y = obj_base_orientation.y();
-            pose2.orientation.z = obj_base_orientation.z();
-            pose2.orientation.w = obj_base_orientation.w();
+            pose2.position.x = des_base_tool_translation(0);
+            pose2.position.y = des_base_tool_translation(1);	
+            pose2.position.z = des_base_tool_translation(2);	
+            pose2.orientation.x = base_obj_orientation.x();
+            pose2.orientation.y = base_obj_orientation.y();
+            pose2.orientation.z = base_obj_orientation.z();
+            pose2.orientation.w = base_obj_orientation.w();
             waypoints.push_back(pose2);
 
-            // planning
             moveit_msgs::RobotTrajectory trajectory;
             const double jump_threshold = 0.0;
             const double eef_step = 0.002;
@@ -320,7 +347,7 @@ int main(int argc, char **argv)
                 ROS_INFO("Path planning failed with only %0.6f success after %d attempts.", fraction, maxtries);
             }
             ur_dashboard_client.call(open_gripper_sig);
-            sleep(1);
+            sleep(7);
             place_flag = false;
             sequence_flag = false;
         }

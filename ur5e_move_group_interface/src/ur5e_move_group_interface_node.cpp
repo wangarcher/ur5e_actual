@@ -90,9 +90,7 @@ int main(int argc, char** argv)
         load_program.call(gripper_open);
         sleep(1);
         start_program.call(ur5e_trigger);
-        sleep(7);
-        default_program_load(&load_program,&start_program);
-        sleep(2);
+        sleep(1);
         flag_mode = -1;
       }
       if(flag_mode == 8)
@@ -102,9 +100,7 @@ int main(int argc, char** argv)
         load_program.call(gripper_close);
         sleep(1);
         start_program.call(ur5e_trigger);
-        sleep(7);
-        default_program_load(&load_program,&start_program);
-        sleep(2);
+        sleep(1);
         flag_mode = -1;
       }
     
@@ -157,6 +153,7 @@ bool default_program_load(ros::ServiceClient* load_program,ros::ServiceClient* s
     ur_dashboard_msgs::Load control_load;
     control_load.request.filename = "ur_robot_driver.urp";
     load_program->call(control_load);
+    sleep(1);
     start_program->call(ur5e_trigger);
 
     if(control_load.response.success == false)

@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="ur5e_plan" type="project_plan" name="project_plan_pipeline" output="screen" />
+
+</launch>
