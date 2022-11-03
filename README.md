@@ -19,7 +19,7 @@ sudo apt-get install ros-melodic-ur-client-library
 sudo apt-get install ros-melodic-ur-msgs
 ```
 
-**NOTE:**There might be more dependencies needed due to vairous reasons. If you found any, please let me know.(archer7wang@outlook.com)
+__NOTE__:There might be more dependencies needed due to vairous reasons. If you found any, please let me know.(archer7wang@outlook.com)
 
 ### 3. Usage
 Like ordinary ros projects, the simluation needs a clean workspace.
