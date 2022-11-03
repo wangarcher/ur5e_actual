@@ -56,14 +56,30 @@ roslaunch ur5e_plan ur5e_project_plan.launch
 ##### 4. The working follow chart
 ```mermaid
     flowchart TD;
-    2_1st_reco_configuration-->Get_the_object_pose;
+    start-->pre_pick;
+    pre_pick-->get_pick_pose;
+    get_pick_pose-->pick;
+    pick-->pre_place;
+    pre_place-->get_place_pose;
+    get_place_pose-->place;
+    place-->end;
 
 ```
-start=>start: Moving to 1st reco configuration
-get_pick_pose=>operation: Get the object pose
-pick=>operation: Moving towards to that pose then pick
-pre_place=>operation: Moving to 2nd reco configuration
-get_place_pose=>operation: Get the target pose
-place=>operation: Moving towards to that pose then place
-end=>end: Done
-start->get_pick_pose->pick->pre_place->get_place_pose->place->end
+```
+start:          Init
+pre_pick:       Moving to 1st reco configuration
+get_pick_pose:  Get the object pose
+pick:           Moving towards to that pose then pick
+pre_place:      Moving to 2nd reco configuration
+get_place_pose: Get the target pose
+place:          Moving towards to that pose then place
+end:            Done
+```
+Be advised! The pipeline is logical unfriendly. Any modification of the working flow might be devastated!
+
+After moving to the pre pick pose, the robot would send a std_msgs::Int8 msg with data "1". And after moving to the pre place pose, the robot would send a std_msgs::Int8 msg with data "2". The reco module can then be enabled after such trigger is sent. The topic name of the trigger msg is "/reco_trigger"
+
+And the reco module would feedback with a geometry_msgs::PoseStamped msg.
+The msg would provide the target pose according to the camera reference frame.
+For the picking object, the "frame_id" of the msg shall be write as "1st".
+And the for the placing target, the "frame_id" of the msg shall be write as "2nd".
