@@ -55,11 +55,11 @@ roslaunch ur5e_plan ur5e_project_plan.launch
 
 ##### 4. The working follow chart
 ```flow
-pre_pick=>start: Moving to 1st reco configuration
+start=>start: Moving to 1st reco configuration
 get_pick_pose=>operation: Get the object pose
 pick=>operation: Moving towards to that pose then pick
 pre_place=>operation: Moving to 2nd reco configuration
 get_place_pose=>operation: Get the target pose
 place=>operation: Moving towards to that pose then place
 end=>end: Done
-pre_pick->get_pick_pose->pick->pre_place->get_place_pose->place->end
+start->get_pick_pose->pick->pre_place->get_place_pose->place->end
