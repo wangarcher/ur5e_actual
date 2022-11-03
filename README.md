@@ -56,23 +56,23 @@ roslaunch ur5e_plan ur5e_project_plan.launch
 ##### 4. The working follow chart
 ```mermaid
     flowchart TD;
-    start-->pre_pick;
+    INIT-->pre_pick;
     pre_pick-->get_pick_pose;
     get_pick_pose-->pick;
     pick-->pre_place;
     pre_place-->get_place_pose;
     get_place_pose-->place;
-    place-->end;
+    place-->DONE;
 ```
 ```
-start:          Init
+INIT:          Init
 pre_pick:       Moving to 1st reco configuration
 get_pick_pose:  Get the object pose
 pick:           Moving towards to that pose then pick
 pre_place:      Moving to 2nd reco configuration
 get_place_pose: Get the target pose
 place:          Moving towards to that pose then place
-end:            Done
+DONE:            Done
 ```
 Be advised! The pipeline is logical unfriendly. Any modification of the working flow might be devastated!
 
