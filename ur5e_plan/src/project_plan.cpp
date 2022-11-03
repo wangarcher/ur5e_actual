@@ -103,9 +103,9 @@ int main(int argc, char **argv)
 
     // geometry info
     Eigen::Quaterniond tool_tcp_orientation(1, 0, 0, 0);
-    Eigen::Vector3d tool_tcp_translation(0, 0, -0.20);
+    Eigen::Vector3d tool_tcp_translation(0, 0, -0.20); //tool0 to tcp
     Eigen::Quaterniond tool_cam_orientatoin(0.707, 0, 0, 0.707);
-    Eigen::Vector3d tool_cam_translation(0.07, 0.05, -0.02);
+    Eigen::Vector3d tool_cam_translation(0.07, 0.05, -0.02); //tool0 to cam
 
     Eigen::Quaterniond base_tool_orientation;
     Eigen::Vector3d base_tool_translation;  
