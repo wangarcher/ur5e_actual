@@ -122,18 +122,19 @@ int main(int argc, char **argv)
         {
             std::cout<<"Caution: start the ur connect driver 1!"<<std::endl;
             ur_dashboard_client.call(arm_working_sig);
-            sleep(3);
+            sleep(5);
 
             std::cout<<"Caution: moving to the pre-pick pose!"<<std::endl;
             arm.setNamedTarget("1st_reco_start"); // first reco state, for the best top-looking view
             arm.move();
+            sleep(1);
 
             ur_dashboard_client.call(open_gripper_sig);
             sleep(7);
 
             std::cout<<"Caution: start the ur connect driver 2!"<<std::endl;
             ur_dashboard_client.call(arm_working_sig);
-            sleep(3);
+            sleep(5);
             reco_trigger_msg.data = 1;
             reco_trigger_pub.publish(reco_trigger_msg);
             sleep(1);
@@ -256,6 +257,8 @@ int main(int argc, char **argv)
             std::cout<<"Caution: moving to the pre-place pose!"<<std::endl;
             arm.setNamedTarget("2nd_reco_start"); //second reco state, for the best top-looking view
             arm.move();
+            sleep(1);
+
             reco_trigger_msg.data = 2;
             reco_trigger_pub.publish(reco_trigger_msg);
             sleep(1);
