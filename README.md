@@ -62,8 +62,7 @@ roslaunch ur5e_plan ur5e_project_plan.launch
     pick-->pre_place;
     pre_place-->get_place_pose;
     get_place_pose-->place;
-
-
+    place-->end;
 ```
 ```
 start:          Init
