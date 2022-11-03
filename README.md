@@ -54,7 +54,11 @@ roslaunch ur5e_plan ur5e_project_plan.launch
 ```
 
 ##### 4. The working follow chart
-```flow
+```mermaid
+    flowchart TD;
+    Moving to 1st reco configuration-->Get the object pose;
+    
+```
 start=>start: Moving to 1st reco configuration
 get_pick_pose=>operation: Get the object pose
 pick=>operation: Moving towards to that pose then pick
