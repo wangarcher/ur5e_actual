@@ -8,7 +8,6 @@ ROS: Melodic, Noetic
  
 Moveit   
 
-   
 
 ### 2. Other Dependencies
 For some dependencies were missed for the project, please check the following instructions.
@@ -20,6 +19,7 @@ sudo apt-get install ros-melodic-ur-msgs
 ```
 
 __NOTE__:There might be more dependencies needed due to vairous reasons. If you found any, please let me know.(archer7wang@outlook.com)
+
 
 ### 3. Usage
 Like ordinary ros projects, the simluation needs a clean workspace.
@@ -34,19 +34,16 @@ source devel/setup.bash
 ##### 0. Power up the UR5e robot
 Press the power bottom in the UR5e robot panel. And wait, then power on the robot by clicking the red icon in the left bottom.
 
-
 ##### 1. Initialization
 To connect the UR5e robot with the PC. 
 ```
 roslaunch ur_robot_driver ur5e_bringup_with_ip.launch
 ```
-
 ##### 2. Start the interface
 To run the interface
 ```
 roslaunch ur5e_move_group_interface run_arm.launch
 ```
-
 ##### 3. Plan
 To run the project planning node
 ```
@@ -75,6 +72,7 @@ place:          Moving towards to that pose then place
 DONE:           Done
 ```
 __Be advised! The current pipeline is logical unfriendly. Any modifications of this work flow might be devastated!__
+
 
 ### 5. ROS topics
 After moving to the pre pick pose, the robot would send a __std_msgs::Int8__ msg with data "__1__". And after moving to the pre place pose, the robot would send a __std_msgs::Int8__ msg with data "__2__". The reco module can then be enabled after such trigger is sent. The topic name of the trigger msg is "__/reco_trigger__"
