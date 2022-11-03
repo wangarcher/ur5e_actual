@@ -79,8 +79,8 @@ __Be advised!__ The pipeline is logical unfriendly. Any modifications of this wo
 ##### 5. ROS topics
 After moving to the pre pick pose, the robot would send a __std_msgs::Int8__ msg with data "__1__". And after moving to the pre place pose, the robot would send a __std_msgs::Int8__ msg with data "__2__". The reco module can then be enabled after such trigger is sent. The topic name of the trigger msg is "__/reco_trigger__"
 
-And the reco module would feedback with a __geometry_msgs::PoseStamped__ msg, the name of the msg is "__/object_visual_odometry__".
-The msg would provide the target pose according to the camera reference frame.
+The reco module would feedback with a __geometry_msgs::PoseStamped__ msg, the name of the msg is "__/object_visual_odometry__".
+The msg would provide the target pose based on the camera reference frame.
 For the picking object, the "__frame_id__" of the msg shall be write as "__1st__".
 And the for the placing target, the "__frame_id__" of the msg shall be write as "__2nd__".
 
@@ -89,10 +89,10 @@ In the earlier logic tests, you may use a __geometry_msgs::PoseStamped__ msg lik
 rostopic pub -1 /object_visual_odometry gemetry_msgs/PoseStamped 
 "header:
   seq: 0
-  stamp:: 0
-    secs: 00
-    nsecs: 00
-  frame_id: '1st '
+  stamp: 0
+    secs: 0
+    nsecs: 0
+  frame_id: '1st'
 pose:
   position:
     x: 0.0
@@ -100,7 +100,7 @@ pose:
     z: 0.35
   orientation:
     x: 0.0
-    y: 0.0"
+    y: 0.0
     z: -0.707
     w: 0.707"
 ```
