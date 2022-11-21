@@ -8,8 +8,8 @@
 	<!-- <include file="$(find ur5e_relay_control)/launch/relay_controller.launch" /> -->
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find ur5e_move_group_interface)/rviz/all.rviz" required="true" />
 	<!-- some basic transform publisher-->
-    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0.07 0.05 -0.02 1.57 0 0 tool0 cam_link 50" />
-    <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0.20 0 0 0 tool0 tcp 50" />
-    <node pkg="tf" type="static_transform_publisher" name="link3_broadcaster" args="0 0 0.1 -1.57 0 0 cam_link obj 50" />
+    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0.025738 -0.080939 0.014417 0.480762 -0.507789 0.510946 0.499950 tool0 camera_base 50" />
+    <!-- <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0.18 0 0 0 tool0 tcp 50" /> -->
+    <node pkg="tf" type="static_transform_publisher" name="link3_broadcaster" args="0 0 0 0.707 0.707 0 0 aruco_marker_frame obj 50" />
 
 </launch>

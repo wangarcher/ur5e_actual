@@ -1,10 +1,4 @@
 // a simple planning demo, initialized in 210813
-#include <moveit/move_group_interface/move_group_interface.h>
-#include <moveit/planning_scene_interface/planning_scene_interface.h>
-#include <moveit_msgs/DisplayRobotState.h>
-#include <moveit_msgs/DisplayTrajectory.h>
-#include <moveit_msgs/AttachedCollisionObject.h>
-#include <moveit_msgs/CollisionObject.h>
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
 #include <vector>
@@ -16,11 +10,10 @@
 #include <iostream>
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Trigger.h>
-#include <mission_mode/mode_switch.h>
 
 
 
-class GeneralPickPlace
+class RecoBuffer
 {
     public:
         Eigen::Vector3d cam_obj_translation_;
@@ -34,7 +27,7 @@ class GeneralPickPlace
         void obj_visual_callback(const geometry_msgs::PoseStamped & odom);
 };
 
-void GeneralPickPlace::obj_visual_callback(const geometry_msgs::PoseStamped & odom)
+void RecoBuffer::obj_visual_callback(const geometry_msgs::PoseStamped & odom)
 {
     cam_obj_translation_ << odom.pose.position.x,
                             odom.pose.position.y,
@@ -71,24 +64,11 @@ int main(int argc, char **argv)
     bool place_flag = false;
     bool sequence_flag = true;
 
-    moveit::planning_interface::MoveGroupInterface arm("manipulator");
-    arm.allowReplanning(true); // Evangelion 3.33: You Can(Not) Redo.
-    arm.setGoalJointTolerance(0.001);
-    arm.setGoalPositionTolerance(0.001); // set position torlerance
-    arm.setGoalOrientationTolerance(0.01);  // set orientation torlerance
-    arm.setMaxAccelerationScalingFactor(0.2); // set max accelerations
-    arm.setMaxVelocityScalingFactor(0.2);
-    
-    std::string end_effector_link = arm.getEndEffectorLink(); //get the end_effector link
-    std::cout<<"end_effector_link: "<<end_effector_link<<std::endl;
-    std::string reference_frame = "base_link"; // set the reference frame
-    arm.setPoseReferenceFrame(reference_frame);
-
-    GeneralPickPlace general_pick_place;
+    RecoBuffer refo;
 
     ros::Rate loop_rate(10);
 
-    ros::Subscriber sub = n.subscribe("/object_visual_odometry", 1000, &GeneralPickPlace::obj_visual_callback, &general_pick_place);
+    ros::Subscriber sub = n.subscribe("/aruco_sine/pose", 1000, &RecoBuffer::obj_visual_callback, &general_pick_place);
     ros::ServiceClient ur_dashboard_client = n.serviceClient<mission_mode::mode_switch>("/arm_mode_switch");
     ros::Publisher reco_trigger_pub = n.advertise<std_msgs::Int8>("/reco_trigger", 1);
 

@@ -126,15 +126,31 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        aruco_marker_frame:
+          Value: false
         base:
           Value: false
         base_link:
           Value: true
         base_link_inertia:
           Value: false
+        camera_base:
+          Value: true
+        camera_body:
+          Value: false
+        camera_visor:
+          Value: false
+        depth_camera_link:
+          Value: false
         flange:
           Value: false
         forearm_link:
+          Value: false
+        imu_link:
+          Value: false
+        obj:
+          Value: true
+        rgb_camera_link:
           Value: false
         shoulder_link:
           Value: false
@@ -143,8 +159,6 @@ Visualization Manager:
         tool0_controller:
           Value: false
         upper_arm_link:
-          Value: false
-        world:
           Value: false
         wrist_1_link:
           Value: false
@@ -158,21 +172,32 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          base_link:
-            base:
-              tool0_controller:
-                {}
-            base_link_inertia:
-              shoulder_link:
-                upper_arm_link:
-                  forearm_link:
-                    wrist_1_link:
-                      wrist_2_link:
-                        wrist_3_link:
-                          flange:
-                            tool0:
-                              {}
+        base_link:
+          base:
+            tool0_controller:
+              {}
+          base_link_inertia:
+            shoulder_link:
+              upper_arm_link:
+                forearm_link:
+                  wrist_1_link:
+                    wrist_2_link:
+                      wrist_3_link:
+                        flange:
+                          tool0:
+                            camera_base:
+                              aruco_marker_frame:
+                                obj:
+                                  {}
+                              camera_body:
+                                {}
+                              camera_visor:
+                                {}
+                              depth_camera_link:
+                                imu_link:
+                                  {}
+                                rgb_camera_link:
+                                  {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -203,7 +228,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.948484182357788
+      Distance: 2.408982276916504
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -218,10 +243,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.44979727268218994
+      Pitch: 0.479797899723053
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.923564910888672
+      Yaw: 4.528585910797119
     Saved: ~
 Window Geometry:
   Displays:
