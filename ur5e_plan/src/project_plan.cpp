@@ -364,7 +364,7 @@ int main(int argc, char **argv)
     sleep(3);
     std::vector<geometry_msgs::Pose> waypoints;
 
-    std::cout << "Caution: moving to the pre-place pose!" << std::endl;
+    std::cout << "Caution: moving to the end pose!" << std::endl;
     arm.setNamedTarget("2nd_reco_start"); // second reco state, for the best top-looking view
     arm.move();
     sleep(7);
