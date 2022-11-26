@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     // geometry info
     Eigen::Quaterniond tool_tcp_orientation(1, 0, 0, 0);
     //<<<<<<< HEAD
-    Eigen::Vector3d tool_tcp_translation(0, 0, -0.17);                                                        // after calibration
+    Eigen::Vector3d tool_tcp_translation(0, 0, -0.205);                                                        // after calibration
     Eigen::Quaterniond tool_cam_orientatoin(0.494830699069, 0.489293676245, -0.504172738262, 0.511413851629); // after calibration
     Eigen::Vector3d tool_cam_translation(0.00100323541413, -0.0877033481828, 0.119296843695);                 // after calibration
     Eigen::Quaterniond bias(0, 0.707, 0, -0.707);

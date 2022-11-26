@@ -86,7 +86,7 @@ int main(int argc, char** argv)
       if(flag_mode == 7)
       {
         ur_dashboard_msgs::Load gripper_open;
-        gripper_open.request.filename = "vg_place.urp";
+        gripper_open.request.filename = "gripper_open.urp";
         load_program.call(gripper_open);
         start_program.call(ur5e_trigger);
         sleep(1);
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
       if(flag_mode == 8)
       {
         ur_dashboard_msgs::Load gripper_close;
-        gripper_close.request.filename = "vg_pick.urp";
+        gripper_close.request.filename = "gripper_close.urp";
         load_program.call(gripper_close);
         start_program.call(ur5e_trigger);
         sleep(1);
