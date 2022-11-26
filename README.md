@@ -27,7 +27,7 @@ __NOTE: There might be more dependencies needed due to various reasons. If you f
 
 
 ### 3. Software preparation
-Like ordinary ros projects, the simulation needs a clean workspace.
+Like ordinary ros projects, the implementation needs a clean workspace.
 ```
 mkdir -p ur5e_actual_ws/src
 cd src
@@ -44,7 +44,7 @@ __At the very beginning, we strongly recommend that any involved personnel shoul
 
 __For technical personnel, please be advised! Any violations of those basic rules might cause severe damage to the UR5e robot and even leads to an immediate decommissioning of the robot!!!__
 
-__For non-technical personnel, please follow the instructions of the operator of the robot when you're on the site. Although the robot would stop its motion when colliding with any kind of obstacle (including you), the impact might cause some physical damage to whom arrogantly ignored the kind of dissuasions and insistently stood in the robot's workspace.__
+__For non-technical personnel, please follow the instructions of the operator of the robot when you're on the site. Although the robot would stop its motion when collided with any kind of obstacle (including you), the impact might cause some physical damage to whom arrogantly ignored the kind dissuasions and insistently stood in the robot's workspace.__
 
 ### 5. Execution Sequence
 
